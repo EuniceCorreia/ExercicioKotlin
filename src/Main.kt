@@ -41,12 +41,14 @@ class CarrinhoDeCompras {
     }
 
     fun exibirCarrinho() {
-        println("Itens no Carrinho")
-        for ((produto, quantidade) in produtos) {
-            println(
-                "${produto.nome} (Quantidade: $quantidade) - R$" +
-                        "${produto.preco * quantidade}"
-            )
+        println("\n🛒 Itens no Carrinho:")
+        if (produtos.isEmpty()){
+            println("Carrinho vazio.")
+        }else{
+            for ((produto, quantidade) in produtos) {
+                println("${produto.nome} (Quantidade: $quantidade) - R$" + "${produto.preco * quantidade}")
+            }
+            println("Total da compra: R$${calcularTotal()}")
         }
     }
 
@@ -57,24 +59,32 @@ class CarrinhoDeCompras {
 }
 
 class Loja (
-    val produtosDisponiveis: List<Produto>){
-    fun listarProdutos(){
+    val produtosDisponiveis: List<Produto>) {
+    fun listarProdutos() {
         println(" Produtos disponíveis:")
-        for (produto in produtosDisponiveis){
+        for (produto in produtosDisponiveis) {
             produto.exibirDetalhes()
         }
     }
-    fun finalizarCompra(cliente: Cliente, carrinho: CarrinhoDeCompras){
+
+    fun finalizarCompra(cliente: Cliente, carrinho: CarrinhoDeCompras) {
         val total = carrinho.calcularTotal()
-        if (cliente.saldo >= total){
-            for ((produto, quantidade) in carrinho.produtos){
-                produto.estoque -= quantidade
-            }
-            cliente.saldo -= total
-            println("Compra finalizada com sucesso! Total: R$$total")
-        }else {
+        if (cliente.saldo < total) {
             println("Saldo insuficiente para finalizar a compra.")
+            return
         }
+        for ((produto, quantidade) in carrinho.produtos) {
+            if (produto.estoque < quantidade)
+                println("❌ Estoque insuficiente para o produto: ${produto.nome}")
+            return
+        }
+
+        for ((produto, quantidade) in carrinho.produtos) {
+            produto.estoque -= quantidade
+        }
+
+        cliente.saldo -= total
+        println("Compra finalizada com sucesso! Total: R$$total")
     }
 }
 
@@ -84,6 +94,8 @@ fun main (){
     val cliente = Cliente(1, "Ana", 5000.0)
     val carrinho = CarrinhoDeCompras()
     val loja = Loja(listOf(produto1, produto2))
+
+    loja.listarProdutos()
 
     carrinho.adicionarProduto(produto1, 1)
     carrinho.adicionarProduto(produto2, 2)
