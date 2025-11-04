@@ -37,8 +37,6 @@ adicionem itens ao carrinho de compras e finalizem a compra com pagamento.
 • Métodos:
 * listarProdutos() → Exibe os produtos disponíveis
 * finalizarCompra(cliente: Cliente, carrinho: CarrinhoDeCompras)
-
- #Regras de Negócio#
  
  O cliente só pode comprar se tiver saldo suficiente.
  Se um produto não estiver no estoque, não pode ser comprado.
